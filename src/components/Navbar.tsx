@@ -15,7 +15,7 @@ const Navbar = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <h1 className="text-xl font-bold tracking-[0.3em] text-foreground">M V S T R</h1>
+        <h1 className="text-xl font-bold tracking-[0.3em] text-foreground">P O O L A B S</h1>
 
         {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-2">
