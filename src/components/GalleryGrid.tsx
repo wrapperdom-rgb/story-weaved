@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
@@ -192,9 +192,21 @@ const GalleryImage = ({
 };
 
 const GalleryGrid = () => {
-  const { items } = useGalleryStore();
+  const { items, loading, fetchItems } = useGalleryStore();
   const { user } = useAuth();
   const { hasPremium } = usePremiumAccess();
+
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
+
+  if (loading && items.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-xs tracking-wider text-muted-foreground animate-pulse">LOADING...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="masonry-grid p-0">
