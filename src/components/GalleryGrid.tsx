@@ -7,8 +7,6 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { useNavigate } from "react-router-dom";
-import { usePremiumAccess } from "@/hooks/usePremiumAccess";
-import { useNavigate } from "react-router-dom";
 
 const PromptModal = ({
   item,
