@@ -4,8 +4,24 @@ import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
 import { X, Copy, Download, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import { useNavigate } from "react-router-dom";
 
-const PromptModal = ({ item, onClose }: { item: GalleryItem; onClose: () => void }) => {
+const PromptModal = ({
+  item,
+  onClose,
+  hasPremium,
+  isLoggedIn,
+}: {
+  item: GalleryItem;
+  onClose: () => void;
+  hasPremium: boolean;
+  isLoggedIn: boolean;
+}) => {
+  const navigate = useNavigate();
+  const canAccess = item.isFree || hasPremium;
+
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(item.prompt);
     toast.success("Prompt copied to clipboard!");
@@ -45,11 +61,11 @@ const PromptModal = ({ item, onClose }: { item: GalleryItem; onClose: () => void
         <img src={item.src} alt="Style" className="w-full" />
 
         <div className="p-6 space-y-4">
-          {item.isFree ? (
+          {canAccess ? (
             <>
               <div className="flex items-center gap-2">
                 <span className="px-2 py-1 text-[10px] font-bold tracking-wider bg-primary text-primary-foreground">
-                  FREE PROMPT
+                  {item.isFree ? "FREE PROMPT" : "PREMIUM PROMPT"}
                 </span>
               </div>
               <p className="text-xs leading-relaxed text-foreground font-mono">
@@ -76,10 +92,22 @@ const PromptModal = ({ item, onClose }: { item: GalleryItem; onClose: () => void
             <div className="text-center py-4 space-y-3">
               <Lock size={24} className="mx-auto text-muted-foreground" />
               <p className="text-xs font-bold tracking-wider text-muted-foreground">
-                SIGN UP TO UNLOCK THIS PROMPT
+                {isLoggedIn
+                  ? "GET ACCESS TO UNLOCK PREMIUM PROMPTS"
+                  : "SIGN UP TO UNLOCK THIS PROMPT"}
               </p>
-              <button className="w-full px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
-                SIGN UP
+              <button
+                onClick={() => {
+                  onClose();
+                  if (isLoggedIn) {
+                    document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    navigate("/signup");
+                  }
+                }}
+                className="w-full px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                {isLoggedIn ? "GET ACCESS — $1" : "SIGN UP"}
               </button>
             </div>
           )}
@@ -89,7 +117,17 @@ const PromptModal = ({ item, onClose }: { item: GalleryItem; onClose: () => void
   );
 };
 
-const GalleryImage = ({ item, index }: { item: GalleryItem; index: number }) => {
+const GalleryImage = ({
+  item,
+  index,
+  hasPremium,
+  isLoggedIn,
+}: {
+  item: GalleryItem;
+  index: number;
+  hasPremium: boolean;
+  isLoggedIn: boolean;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -140,7 +178,14 @@ const GalleryImage = ({ item, index }: { item: GalleryItem; index: number }) => 
       </motion.div>
 
       <AnimatePresence>
-        {showModal && <PromptModal item={item} onClose={() => setShowModal(false)} />}
+        {showModal && (
+          <PromptModal
+            item={item}
+            onClose={() => setShowModal(false)}
+            hasPremium={hasPremium}
+            isLoggedIn={isLoggedIn}
+          />
+        )}
       </AnimatePresence>
     </>
   );
@@ -148,11 +193,19 @@ const GalleryImage = ({ item, index }: { item: GalleryItem; index: number }) => 
 
 const GalleryGrid = () => {
   const { items } = useGalleryStore();
+  const { user } = useAuth();
+  const { hasPremium } = usePremiumAccess();
 
   return (
     <div className="masonry-grid p-0">
       {items.map((item, i) => (
-        <GalleryImage key={item.id} item={item} index={i} />
+        <GalleryImage
+          key={item.id}
+          item={item}
+          index={i}
+          hasPremium={hasPremium}
+          isLoggedIn={!!user}
+        />
       ))}
     </div>
   );
