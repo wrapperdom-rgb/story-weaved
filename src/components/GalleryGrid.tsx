@@ -131,6 +131,10 @@ const GalleryImage = ({
   isLoggedIn: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -139,6 +143,18 @@ const GalleryImage = ({
   const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   const [showModal, setShowModal] = useState(false);
+
+  const imgSrc = retryCount > 0
+    ? `${item.src}${item.src.includes('?') ? '&' : '?'}retry=${retryCount}`
+    : item.src;
+
+  const handleImageError = () => {
+    if (retryCount < 2) {
+      setTimeout(() => setRetryCount((c) => c + 1), 1000 * (retryCount + 1));
+    } else {
+      setImageError(true);
+    }
+  };
 
   return (
     <div className="relative break-inside-avoid mb-1">
@@ -167,14 +183,26 @@ const GalleryImage = ({
           </motion.span>
         )}
         <motion.div style={{ y }} className="overflow-hidden">
-          <motion.img
-            src={item.src}
-            alt="Style gallery"
-            className="w-full block"
-            loading="lazy"
-            whileHover={{ scale: 1.08 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          />
+          {imageError ? (
+            <div className="w-full aspect-[3/4] bg-muted flex items-center justify-center">
+              <span className="text-[10px] tracking-wider text-muted-foreground">FAILED TO LOAD</span>
+            </div>
+          ) : (
+            <motion.img
+              key={retryCount}
+              src={imgSrc}
+              alt="Style gallery"
+              className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              loading="eager"
+              onLoad={() => setImageLoaded(true)}
+              onError={handleImageError}
+              whileHover={{ scale: 1.08 }}
+              transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            />
+          )}
+          {!imageLoaded && !imageError && (
+            <div className="w-full aspect-[3/4] bg-muted animate-pulse" />
+          )}
         </motion.div>
       </motion.div>
 
