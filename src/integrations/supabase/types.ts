@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      gallery_items: {
+        Row: {
+          created_at: string
+          id: string
+          is_free: boolean
+          prompt: string
+          sort_order: number
+          src: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          prompt: string
+          sort_order?: number
+          src: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          prompt?: string
+          sort_order?: number
+          src?: string
+        }
+        Relationships: []
+      }
       purchases: {
         Row: {
           amount: number

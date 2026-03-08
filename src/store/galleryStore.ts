@@ -1,100 +1,96 @@
 import { create } from "zustand";
-import gallery1 from "@/assets/gallery-1.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import gallery3 from "@/assets/gallery-3.jpg";
-import gallery4 from "@/assets/gallery-4.jpg";
-import gallery5 from "@/assets/gallery-5.jpg";
-import gallery6 from "@/assets/gallery-6.jpg";
-import gallery7 from "@/assets/gallery-7.jpg";
-import gallery8 from "@/assets/gallery-8.jpg";
-import gallery9 from "@/assets/gallery-9.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface GalleryItem {
   id: string;
   src: string;
   prompt: string;
   isFree: boolean;
+  sortOrder: number;
 }
 
 interface GalleryStore {
   items: GalleryItem[];
-  addItem: (item: Omit<GalleryItem, "id">) => void;
-  removeItem: (id: string) => void;
-  updateItem: (id: string, updates: Partial<Omit<GalleryItem, "id">>) => void;
+  loading: boolean;
+  fetchItems: () => Promise<void>;
+  addItem: (item: Omit<GalleryItem, "id">) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  updateItem: (id: string, updates: Partial<Omit<GalleryItem, "id">>) => Promise<void>;
+  reorderItems: (reorderedItems: GalleryItem[]) => Promise<void>;
 }
 
-const initialItems: GalleryItem[] = [
-  {
-    id: "1",
-    src: gallery1,
-    prompt: "A stylish young man in a designer white sweatshirt standing in front of an orange BMW sports car at night, urban street photography, high fashion editorial style, moody lighting",
-    isFree: true,
-  },
-  {
-    id: "2",
-    src: gallery2,
-    prompt: "A stylish man in a black Lanvin hoodie leaning against a red luxury sports car in a garage, fashion editorial photography, cinematic lighting",
-    isFree: true,
-  },
-  {
-    id: "3",
-    src: gallery3,
-    prompt: "A fashionable man in a black puffer jacket and beanie sitting in a luxury car interior at night, wearing sunglasses, street style photography, moody dark tones",
-    isFree: false,
-  },
-  {
-    id: "4",
-    src: gallery4,
-    prompt: "A stylish man in a navy beanie and black puffer jacket walking on a European city street at night, fashion editorial street photography, cinematic urban lighting",
-    isFree: false,
-  },
-  {
-    id: "5",
-    src: gallery5,
-    prompt: "A man in a blue polo shirt with sunglasses standing by Italian lakeside architecture, Lake Como vibes, warm golden hour light, fashion editorial photography",
-    isFree: false,
-  },
-  {
-    id: "6",
-    src: gallery6,
-    prompt: "A stylish man in a glossy black puffer jacket looking over his shoulder on a city street at night, moody fashion photography, dramatic lighting",
-    isFree: false,
-  },
-  {
-    id: "7",
-    src: gallery7,
-    prompt: "A fashionable man in a grey overcoat and turtleneck, European architecture background, editorial street style photography, soft natural lighting",
-    isFree: false,
-  },
-  {
-    id: "8",
-    src: gallery8,
-    prompt: "A man in a tan trench coat and white sneakers walking through a modern art gallery, high fashion editorial, clean minimalist setting",
-    isFree: false,
-  },
-  {
-    id: "9",
-    src: gallery9,
-    prompt: "A stylish man in a cream knit sweater and gold chain, leaning on a stone wall, Mediterranean setting, warm sunset light, fashion photography",
-    isFree: false,
-  },
-];
+const mapRow = (row: any): GalleryItem => ({
+  id: row.id,
+  src: row.src,
+  prompt: row.prompt,
+  isFree: row.is_free,
+  sortOrder: row.sort_order,
+});
 
-export const useGalleryStore = create<GalleryStore>((set) => ({
-  items: initialItems,
-  addItem: (item) =>
-    set((state) => ({
-      items: [
-        { ...item, id: Date.now().toString() },
-        ...state.items,
-      ],
-    })),
-  removeItem: (id) =>
-    set((state) => ({
-      items: state.items.filter((i) => i.id !== id),
-    })),
-  updateItem: (id, updates) =>
-    set((state) => ({
-      items: state.items.map((i) => (i.id === id ? { ...i, ...updates } : i)),
-    })),
+export const useGalleryStore = create<GalleryStore>((set, get) => ({
+  items: [],
+  loading: true,
+
+  fetchItems: async () => {
+    set({ loading: true });
+    const { data, error } = await supabase
+      .from("gallery_items")
+      .select("*")
+      .order("sort_order", { ascending: true });
+
+    if (!error && data) {
+      set({ items: data.map(mapRow), loading: false });
+    } else {
+      set({ loading: false });
+    }
+  },
+
+  addItem: async (item) => {
+    const maxOrder = Math.max(0, ...get().items.map((i) => i.sortOrder));
+    const { data, error } = await supabase
+      .from("gallery_items")
+      .insert({
+        src: item.src,
+        prompt: item.prompt,
+        is_free: item.isFree,
+        sort_order: maxOrder + 1,
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      set((state) => ({ items: [...state.items, mapRow(data)] }));
+    }
+  },
+
+  removeItem: async (id) => {
+    const { error } = await supabase.from("gallery_items").delete().eq("id", id);
+    if (!error) {
+      set((state) => ({ items: state.items.filter((i) => i.id !== id) }));
+    }
+  },
+
+  updateItem: async (id, updates) => {
+    const dbUpdates: any = {};
+    if (updates.src !== undefined) dbUpdates.src = updates.src;
+    if (updates.prompt !== undefined) dbUpdates.prompt = updates.prompt;
+    if (updates.isFree !== undefined) dbUpdates.is_free = updates.isFree;
+    if (updates.sortOrder !== undefined) dbUpdates.sort_order = updates.sortOrder;
+
+    const { error } = await supabase.from("gallery_items").update(dbUpdates).eq("id", id);
+    if (!error) {
+      set((state) => ({
+        items: state.items.map((i) => (i.id === id ? { ...i, ...updates } : i)),
+      }));
+    }
+  },
+
+  reorderItems: async (reorderedItems) => {
+    set({ items: reorderedItems });
+    // Update sort_order in DB
+    const updates = reorderedItems.map((item, index) =>
+      supabase.from("gallery_items").update({ sort_order: index + 1 }).eq("id", item.id)
+    );
+    await Promise.all(updates);
+  },
 }));
