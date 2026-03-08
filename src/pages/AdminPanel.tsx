@@ -190,13 +190,25 @@ const AdminPanel = () => {
 
             {editingId === item.id ? (
               <div className="flex-1 space-y-2">
-                <input
-                  type="text"
-                  value={editForm.src || ""}
-                  onChange={(e) => setEditForm({ ...editForm, src: e.target.value })}
-                  className="w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none"
-                  placeholder="Image URL"
-                />
+                <label className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border hover:border-foreground transition-colors cursor-pointer">
+                  <Upload size={12} className="text-muted-foreground" />
+                  <span className="text-[10px] tracking-wider text-muted-foreground">CHANGE IMAGE</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                          setEditForm({ ...editForm, src: ev.target?.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
                 <textarea
                   value={editForm.prompt || ""}
                   onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })}
