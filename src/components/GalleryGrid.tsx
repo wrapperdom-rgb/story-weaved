@@ -1,4 +1,4 @@
-import { useRef, useEffect, forwardRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
@@ -7,13 +7,19 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 
-const PromptModal = forwardRef<HTMLDivElement, {
+const PromptModal = ({
+  item,
+  onClose,
+  hasPremium,
+  isLoggedIn,
+}: {
   item: GalleryItem;
   onClose: () => void;
   hasPremium: boolean;
   isLoggedIn: boolean;
-}>(({ item, onClose, hasPremium, isLoggedIn }, ref) => {
+}) => {
   const navigate = useNavigate();
   const canAccess = item.isFree || hasPremium;
 
@@ -30,9 +36,8 @@ const PromptModal = forwardRef<HTMLDivElement, {
     toast.success("Image downloading...");
   };
 
-  return (
+  return createPortal(
     <motion.div
-      ref={ref}
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -109,10 +114,10 @@ const PromptModal = forwardRef<HTMLDivElement, {
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
-});
-PromptModal.displayName = "PromptModal";
+};
 
 const GalleryImage = ({
   item,
@@ -131,13 +136,12 @@ const GalleryImage = ({
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="masonry-item relative break-inside-avoid mb-1">
+    <div className="relative break-inside-avoid mb-1">
       <motion.div
         ref={containerRef}
         className="relative group cursor-pointer overflow-hidden"
@@ -162,7 +166,7 @@ const GalleryImage = ({
             FREE PROMPT
           </motion.span>
         )}
-        <motion.div style={{ y, scale }} className="overflow-hidden">
+        <motion.div style={{ y }} className="overflow-hidden">
           <motion.img
             src={item.src}
             alt="Style gallery"
