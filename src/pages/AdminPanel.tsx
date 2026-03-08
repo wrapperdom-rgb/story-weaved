@@ -5,10 +5,36 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
+const ADMIN_EMAIL = "wrapperdom@gmail.com";
 const ADMIN_PASSWORD = "mvstr2026";
 
 const AdminLoginForm = ({ onAuth }: { onAuth: () => void }) => {
   const [password, setPassword] = useState("");
+  const { user } = useAuth();
+
+  // Check if logged-in user is admin
+  const isAdminUser = user?.email === ADMIN_EMAIL;
+
+  if (!isAdminUser) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-sm w-full space-y-6 text-center">
+          <h1 className="text-sm font-bold tracking-[0.3em] text-foreground">
+            ADMIN ACCESS
+          </h1>
+          <p className="text-[10px] tracking-wider text-muted-foreground">
+            {user ? "YOU DON'T HAVE ADMIN ACCESS" : "SIGN IN WITH ADMIN ACCOUNT FIRST"}
+          </p>
+          <a
+            href="/sign-in"
+            className="inline-block px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            {user ? "SWITCH ACCOUNT" : "SIGN IN"}
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -16,6 +42,9 @@ const AdminLoginForm = ({ onAuth }: { onAuth: () => void }) => {
         <h1 className="text-sm font-bold tracking-[0.3em] text-foreground text-center">
           ADMIN ACCESS
         </h1>
+        <p className="text-[10px] tracking-wider text-muted-foreground text-center">
+          SIGNED IN AS {user.email}
+        </p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
