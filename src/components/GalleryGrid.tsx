@@ -1,10 +1,12 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, forwardRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
 import { X, Copy, Download, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import { useNavigate } from "react-router-dom";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { useNavigate } from "react-router-dom";
 
