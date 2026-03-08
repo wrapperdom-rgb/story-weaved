@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
-import { Trash2, Edit2, Plus, Save, X, ArrowLeft } from "lucide-react";
+import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -116,13 +116,32 @@ const AdminPanel = () => {
         <div className="border-b border-border p-6 bg-secondary">
           <div className="max-w-2xl mx-auto space-y-3">
             <h3 className="text-xs font-bold tracking-wider text-foreground">ADD NEW ITEM</h3>
-            <input
-              type="text"
-              value={newItem.src}
-              onChange={(e) => setNewItem({ ...newItem, src: e.target.value })}
-              placeholder="Image URL (paste external URL or asset path)"
-              className="w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none"
-            />
+            <label className="flex items-center gap-3 w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border hover:border-foreground transition-colors cursor-pointer">
+              {newItem.src ? (
+                <img src={newItem.src} alt="" className="w-10 h-10 object-cover border border-border" />
+              ) : (
+                <ImageIcon size={16} className="text-muted-foreground" />
+              )}
+              <span className="text-muted-foreground tracking-wider">
+                {newItem.src ? "IMAGE SELECTED — CLICK TO CHANGE" : "CLICK TO UPLOAD IMAGE"}
+              </span>
+              <Upload size={14} className="ml-auto text-muted-foreground" />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      setNewItem({ ...newItem, src: ev.target?.result as string });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </label>
             <textarea
               value={newItem.prompt}
               onChange={(e) => setNewItem({ ...newItem, prompt: e.target.value })}
@@ -171,13 +190,25 @@ const AdminPanel = () => {
 
             {editingId === item.id ? (
               <div className="flex-1 space-y-2">
-                <input
-                  type="text"
-                  value={editForm.src || ""}
-                  onChange={(e) => setEditForm({ ...editForm, src: e.target.value })}
-                  className="w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none"
-                  placeholder="Image URL"
-                />
+                <label className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border hover:border-foreground transition-colors cursor-pointer">
+                  <Upload size={12} className="text-muted-foreground" />
+                  <span className="text-[10px] tracking-wider text-muted-foreground">CHANGE IMAGE</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                          setEditForm({ ...editForm, src: ev.target?.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
                 <textarea
                   value={editForm.prompt || ""}
                   onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })}
