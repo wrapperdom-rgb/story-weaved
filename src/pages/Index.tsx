@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Banner from "@/components/Banner";
 import GalleryGrid from "@/components/GalleryGrid";
+import PricingSection from "@/components/PricingSection";
 
 const Index = () => {
   return (
@@ -8,6 +9,7 @@ const Index = () => {
       <Navbar />
       <Banner />
       <GalleryGrid />
+      <PricingSection />
     </div>
   );
 };
