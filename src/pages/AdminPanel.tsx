@@ -116,13 +116,32 @@ const AdminPanel = () => {
         <div className="border-b border-border p-6 bg-secondary">
           <div className="max-w-2xl mx-auto space-y-3">
             <h3 className="text-xs font-bold tracking-wider text-foreground">ADD NEW ITEM</h3>
-            <input
-              type="text"
-              value={newItem.src}
-              onChange={(e) => setNewItem({ ...newItem, src: e.target.value })}
-              placeholder="Image URL (paste external URL or asset path)"
-              className="w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none"
-            />
+            <label className="flex items-center gap-3 w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border hover:border-foreground transition-colors cursor-pointer">
+              {newItem.src ? (
+                <img src={newItem.src} alt="" className="w-10 h-10 object-cover border border-border" />
+              ) : (
+                <ImageIcon size={16} className="text-muted-foreground" />
+              )}
+              <span className="text-muted-foreground tracking-wider">
+                {newItem.src ? "IMAGE SELECTED — CLICK TO CHANGE" : "CLICK TO UPLOAD IMAGE"}
+              </span>
+              <Upload size={14} className="ml-auto text-muted-foreground" />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      setNewItem({ ...newItem, src: ev.target?.result as string });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </label>
             <textarea
               value={newItem.prompt}
               onChange={(e) => setNewItem({ ...newItem, prompt: e.target.value })}
