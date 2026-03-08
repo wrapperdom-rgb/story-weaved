@@ -61,6 +61,7 @@ export default {
           DEFAULT: "hsl(var(--banner-bg))",
           foreground: "hsl(var(--banner-foreground))",
         },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
