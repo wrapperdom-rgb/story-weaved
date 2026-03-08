@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
-import { Trash2, Edit2, Plus, Save, X, ArrowLeft } from "lucide-react";
+import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
