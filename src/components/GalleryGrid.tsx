@@ -58,7 +58,7 @@ const PromptModal = ({
           <X size={16} />
         </button>
 
-        <img src={item.src} alt="Style" className="w-full" />
+        <img src={item.src} alt="Style" className="w-full" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
 
         <div className="p-6 space-y-4">
           {canAccess ? (
