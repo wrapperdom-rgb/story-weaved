@@ -42,7 +42,7 @@ const PricingSection = () => {
   };
 
   return (
-    <section className="py-24 px-4 border-t border-border bg-secondary/30">
+    <section id="pricing" className="py-24 px-4 border-t border-border bg-secondary/30">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
