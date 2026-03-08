@@ -63,14 +63,28 @@
     @apply bg-background text-foreground font-mono antialiased;
     font-family: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+/* Gallery masonry grid */
+@layer components {
+  .masonry-grid {
+    column-count: 3;
+    column-gap: 4px;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 1024px) {
+    .masonry-grid {
+      column-count: 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .masonry-grid {
+      column-count: 1;
+    }
   }
 }
