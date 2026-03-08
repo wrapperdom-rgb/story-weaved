@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import gallery1 from "@/assets/gallery-1.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
@@ -25,23 +27,59 @@ const items: GalleryItem[] = [
   { src: gallery9 },
 ];
 
+const GalleryImage = ({ item, index }: { item: GalleryItem; index: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+
+  return (
+    <motion.div
+      ref={ref}
+      className="masonry-item relative group cursor-pointer overflow-hidden"
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.7,
+        delay: (index % 3) * 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+    >
+      {item.hasBadge && (
+        <motion.span
+          className="absolute top-3 left-3 z-10 px-3 py-1 text-[10px] font-bold tracking-wider bg-background text-foreground border border-border"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          FREE PROMPT
+        </motion.span>
+      )}
+      <motion.div style={{ y, scale }} className="overflow-hidden">
+        <motion.img
+          src={item.src}
+          alt="Style gallery"
+          className="w-full block"
+          loading="lazy"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const GalleryGrid = () => {
   return (
     <div className="masonry-grid p-0">
       {items.map((item, i) => (
-        <div key={i} className="masonry-item relative group cursor-pointer overflow-hidden">
-          {item.hasBadge && (
-            <span className="absolute top-3 left-3 z-10 px-3 py-1 text-[10px] font-bold tracking-wider bg-background text-foreground border border-border">
-              FREE PROMPT
-            </span>
-          )}
-          <img
-            src={item.src}
-            alt="Style gallery"
-            className="w-full block transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-        </div>
+        <GalleryImage key={i} item={item} index={i} />
       ))}
     </div>
   );
