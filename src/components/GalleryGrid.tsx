@@ -8,17 +8,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { useNavigate } from "react-router-dom";
 
-const PromptModal = ({
-  item,
-  onClose,
-  hasPremium,
-  isLoggedIn,
-}: {
+const PromptModal = forwardRef<HTMLDivElement, {
   item: GalleryItem;
   onClose: () => void;
   hasPremium: boolean;
   isLoggedIn: boolean;
-}) => {
+}>(({ item, onClose, hasPremium, isLoggedIn }, ref) => {
   const navigate = useNavigate();
   const canAccess = item.isFree || hasPremium;
 
@@ -37,6 +32,7 @@ const PromptModal = ({
 
   return (
     <motion.div
+      ref={ref}
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -115,8 +111,8 @@ const PromptModal = ({
       </motion.div>
     </motion.div>
   );
-};
-
+});
+PromptModal.displayName = "PromptModal";
 const GalleryImage = ({
   item,
   index,
