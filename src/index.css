@@ -62,7 +62,7 @@
   body {
     @apply bg-background text-foreground font-mono antialiased;
     font-family: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
-  }
+}
 
 /* Gallery masonry grid */
 @layer components {
