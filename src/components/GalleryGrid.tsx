@@ -205,7 +205,7 @@ const GalleryGrid = () => {
   }
 
   return (
-    <div className="masonry-grid p-0">
+    <div className="masonry-grid p-0 relative">
       {items.map((item, i) => (
         <GalleryImage
           key={item.id}
