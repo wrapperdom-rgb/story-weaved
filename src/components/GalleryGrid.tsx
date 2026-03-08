@@ -113,6 +113,7 @@ const PromptModal = forwardRef<HTMLDivElement, {
   );
 });
 PromptModal.displayName = "PromptModal";
+
 const GalleryImage = ({
   item,
   index,
@@ -124,9 +125,9 @@ const GalleryImage = ({
   hasPremium: boolean;
   isLoggedIn: boolean;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: ref,
+    target: containerRef,
     offset: ["start end", "end start"],
   });
 
@@ -136,10 +137,10 @@ const GalleryImage = ({
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <>
+    <div className="masonry-item relative break-inside-avoid mb-1">
       <motion.div
-        ref={ref}
-        className="masonry-item relative group cursor-pointer overflow-hidden"
+        ref={containerRef}
+        className="relative group cursor-pointer overflow-hidden"
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
@@ -183,7 +184,7 @@ const GalleryImage = ({
           />
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 
