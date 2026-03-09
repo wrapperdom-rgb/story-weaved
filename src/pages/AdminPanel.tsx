@@ -160,7 +160,7 @@ const EditModal = ({ item, onSave, onClose }: {
   onSave: (id: string, updates: Partial<GalleryItem> & { file?: File }) => Promise<void>;
   onClose: () => void;
 }) => {
-  const [editForm, setEditForm] = useState({ prompt: item.prompt, isFree: item.isFree, src: item.src });
+  const [editForm, setEditForm] = useState({ prompt: item.prompt, isFree: item.isFree, src: item.src, aspectRatio: item.aspectRatio || "original" });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState(item.src);
   const [saving, setSaving] = useState(false);
@@ -175,7 +175,7 @@ const EditModal = ({ item, onSave, onClose }: {
 
   const handleSave = async () => {
     setSaving(true);
-    await onSave(item.id, { prompt: editForm.prompt, isFree: editForm.isFree, ...(file ? { file } : {}) });
+    await onSave(item.id, { prompt: editForm.prompt, isFree: editForm.isFree, aspectRatio: editForm.aspectRatio, ...(file ? { file } : {}) });
     setSaving(false);
     onClose();
   };
@@ -195,6 +195,16 @@ const EditModal = ({ item, onSave, onClose }: {
           <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
         </label>
         <textarea value={editForm.prompt} onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })} className="w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none resize-none" rows={4} />
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-wider text-muted-foreground">RATIO:</span>
+          <div className="flex gap-1 flex-wrap">
+            {ASPECT_RATIOS.map((r) => (
+              <button key={r.value} onClick={() => setEditForm({ ...editForm, aspectRatio: r.value })} className={`px-2 py-1 text-[10px] font-bold tracking-wider border transition-colors ${editForm.aspectRatio === r.value ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'}`}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-xs tracking-wider text-foreground cursor-pointer">
             <input type="checkbox" checked={editForm.isFree} onChange={(e) => setEditForm({ ...editForm, isFree: e.target.checked })} className="accent-foreground" />
