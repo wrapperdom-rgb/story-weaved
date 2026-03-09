@@ -233,9 +233,9 @@ const AdminPanel = () => {
 
   useEffect(() => { if (authenticated) fetchItems(); }, [authenticated, fetchItems]);
 
-  const handleAdd = async (newItem: { file: File; prompt: string; isFree: boolean }) => {
+  const handleAdd = async (newItem: { file: File; prompt: string; isFree: boolean; aspectRatio: string }) => {
     if (!user) { toast.error("You must be signed in"); return; }
-    await addItem({ file: newItem.file, prompt: newItem.prompt, isFree: newItem.isFree, sortOrder: 0 });
+    await addItem({ file: newItem.file, prompt: newItem.prompt, isFree: newItem.isFree, sortOrder: 0, aspectRatio: newItem.aspectRatio } as any);
     setShowAddForm(false);
     toast.success("Item added");
   };
