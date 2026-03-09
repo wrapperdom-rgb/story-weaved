@@ -88,7 +88,29 @@ const PromptModal = ({
                   DOWNLOAD
                 </button>
               </div>
-            </>
+
+              {/* How it Works mini-guide */}
+              <div className="border-t border-border pt-4 space-y-3">
+                <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">HOW TO USE</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Download size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Download the reference image above</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Copy size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Copy the prompt to your clipboard</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Sparkles size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Open <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:opacity-80">Google Gemini</a> or any AI image tool</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Camera size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Upload your face photo + the reference image, paste the prompt & generate</p>
+                  </div>
+                </div>
+              </div>
           ) : (
             <div className="text-center py-4 space-y-3">
               <Lock size={24} className="mx-auto text-muted-foreground" />
