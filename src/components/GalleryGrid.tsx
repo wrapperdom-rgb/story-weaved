@@ -111,6 +111,7 @@ const PromptModal = ({
                   </div>
                 </div>
               </div>
+            </>
           ) : (
             <div className="text-center py-4 space-y-3">
               <Lock size={24} className="mx-auto text-muted-foreground" />
