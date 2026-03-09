@@ -28,6 +28,7 @@ const mapRow = (row: any): GalleryItem => ({
   prompt: row.prompt,
   isFree: row.is_free,
   sortOrder: row.sort_order,
+  aspectRatio: row.aspect_ratio || "original",
 });
 
 async function uploadImage(file: File): Promise<string> {
