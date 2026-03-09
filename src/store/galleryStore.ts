@@ -7,6 +7,7 @@ export interface GalleryItem {
   prompt: string;
   isFree: boolean;
   sortOrder: number;
+  aspectRatio: string;
 }
 
 interface GalleryStore {
