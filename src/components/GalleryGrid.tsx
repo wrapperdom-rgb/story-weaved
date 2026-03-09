@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
-import { X, Copy, Download, Lock } from "lucide-react";
+import { X, Copy, Download, Lock, Sparkles, Camera, ClipboardPaste } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
@@ -87,6 +87,29 @@ const PromptModal = ({
                   <Download size={14} />
                   DOWNLOAD
                 </button>
+              </div>
+
+              {/* How it Works mini-guide */}
+              <div className="border-t border-border pt-4 space-y-3">
+                <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">HOW TO USE</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Download size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Download the reference image above</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Copy size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Copy the prompt to your clipboard</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Sparkles size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Open <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:opacity-80">Google Gemini</a> or any AI image tool</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Camera size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="text-[10px] leading-relaxed text-muted-foreground">Upload your face photo + the reference image, paste the prompt & generate</p>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
@@ -184,7 +207,7 @@ const GalleryImage = ({
         )}
         <motion.div style={{ y }} className="overflow-hidden">
           {imageError ? (
-            <div className="w-full aspect-[3/4] bg-muted flex items-center justify-center">
+            <div className={`w-full bg-muted flex items-center justify-center ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-[3/4]'}`}>
               <span className="text-[10px] tracking-wider text-muted-foreground">FAILED TO LOAD</span>
             </div>
           ) : (
@@ -192,7 +215,7 @@ const GalleryImage = ({
               key={retryCount}
               src={imgSrc}
               alt="Style gallery"
-              className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${item.aspectRatio !== 'original' ? `object-cover ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : ''}` : ''}`}
               loading="eager"
               onLoad={() => setImageLoaded(true)}
               onError={handleImageError}
@@ -201,7 +224,7 @@ const GalleryImage = ({
             />
           )}
           {!imageLoaded && !imageError && (
-            <div className="w-full aspect-[3/4] bg-muted animate-pulse" />
+            <div className={`w-full bg-muted animate-pulse ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-[3/4]'}`} />
           )}
         </motion.div>
       </motion.div>

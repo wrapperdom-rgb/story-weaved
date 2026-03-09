@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       gallery_items: {
         Row: {
+          aspect_ratio: string | null
           created_at: string
           id: string
           is_free: boolean
@@ -24,6 +25,7 @@ export type Database = {
           src: string
         }
         Insert: {
+          aspect_ratio?: string | null
           created_at?: string
           id?: string
           is_free?: boolean
@@ -32,6 +34,7 @@ export type Database = {
           src: string
         }
         Update: {
+          aspect_ratio?: string | null
           created_at?: string
           id?: string
           is_free?: boolean

@@ -7,13 +7,14 @@ export interface GalleryItem {
   prompt: string;
   isFree: boolean;
   sortOrder: number;
+  aspectRatio: string;
 }
 
 interface GalleryStore {
   items: GalleryItem[];
   loading: boolean;
   fetchItems: () => Promise<void>;
-  addItem: (item: { file?: File; src?: string; prompt: string; isFree: boolean; sortOrder: number }) => Promise<void>;
+  addItem: (item: { file?: File; src?: string; prompt: string; isFree: boolean; sortOrder: number; aspectRatio?: string }) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   updateItem: (id: string, updates: Partial<Omit<GalleryItem, "id">> & { file?: File }) => Promise<void>;
   reorderItems: (reorderedItems: GalleryItem[]) => Promise<void>;
@@ -27,6 +28,7 @@ const mapRow = (row: any): GalleryItem => ({
   prompt: row.prompt,
   isFree: row.is_free,
   sortOrder: row.sort_order,
+  aspectRatio: row.aspect_ratio || "original",
 });
 
 async function uploadImage(file: File): Promise<string> {
@@ -63,7 +65,6 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
   addItem: async (item) => {
     let src = item.src || "";
     
-    // Upload file to storage if provided
     if (item.file) {
       try {
         src = await uploadImage(item.file);
@@ -81,6 +82,7 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
         prompt: item.prompt,
         is_free: item.isFree,
         sort_order: maxOrder + 1,
+        aspect_ratio: (item as any).aspectRatio || "original",
       })
       .select()
       .single();
@@ -115,6 +117,7 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
     if (updates.prompt !== undefined) dbUpdates.prompt = updates.prompt;
     if (updates.isFree !== undefined) dbUpdates.is_free = updates.isFree;
     if (updates.sortOrder !== undefined) dbUpdates.sort_order = updates.sortOrder;
+    if (updates.aspectRatio !== undefined) dbUpdates.aspect_ratio = updates.aspectRatio;
 
     const { error } = await supabase.from("gallery_items").update(dbUpdates).eq("id", id);
     if (!error) {

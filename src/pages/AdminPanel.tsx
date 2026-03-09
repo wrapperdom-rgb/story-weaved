@@ -8,6 +8,14 @@ import { useAuth } from "@/hooks/useAuth";
 const ADMIN_EMAIL = "wrapperdom@gmail.com";
 const ADMIN_PASSWORD = "mvstr2026";
 
+const ASPECT_RATIOS = [
+  { value: "original", label: "ORIGINAL" },
+  { value: "1:1", label: "1:1" },
+  { value: "4:5", label: "4:5" },
+  { value: "3:4", label: "3:4" },
+  { value: "9:16", label: "9:16" },
+];
+
 const AdminLoginForm = ({ onAuth }: { onAuth: () => void }) => {
   const [password, setPassword] = useState("");
   const { user } = useAuth();
@@ -48,13 +56,14 @@ const AddItemForm = ({
   onAdd,
   onCancel,
 }: {
-  onAdd: (item: { file: File; prompt: string; isFree: boolean }) => Promise<void>;
+  onAdd: (item: { file: File; prompt: string; isFree: boolean; aspectRatio: string }) => Promise<void>;
   onCancel: () => void;
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [prompt, setPrompt] = useState("");
   const [isFree, setIsFree] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState("original");
   const [saving, setSaving] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +80,7 @@ const AddItemForm = ({
       return;
     }
     setSaving(true);
-    await onAdd({ file, prompt, isFree });
+    await onAdd({ file, prompt, isFree, aspectRatio });
     setSaving(false);
   };
 
@@ -92,6 +101,16 @@ const AddItemForm = ({
           <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
         </label>
         <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="AI Prompt" rows={3} className="w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none resize-none" />
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-wider text-muted-foreground">RATIO:</span>
+          <div className="flex gap-1">
+            {ASPECT_RATIOS.map((r) => (
+              <button key={r.value} onClick={() => setAspectRatio(r.value)} className={`px-2 py-1 text-[10px] font-bold tracking-wider border transition-colors ${aspectRatio === r.value ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'}`}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-xs tracking-wider text-foreground cursor-pointer">
             <input type="checkbox" checked={isFree} onChange={(e) => setIsFree(e.target.checked)} className="accent-foreground" />
@@ -141,7 +160,7 @@ const EditModal = ({ item, onSave, onClose }: {
   onSave: (id: string, updates: Partial<GalleryItem> & { file?: File }) => Promise<void>;
   onClose: () => void;
 }) => {
-  const [editForm, setEditForm] = useState({ prompt: item.prompt, isFree: item.isFree, src: item.src });
+  const [editForm, setEditForm] = useState({ prompt: item.prompt, isFree: item.isFree, src: item.src, aspectRatio: item.aspectRatio || "original" });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState(item.src);
   const [saving, setSaving] = useState(false);
@@ -156,7 +175,7 @@ const EditModal = ({ item, onSave, onClose }: {
 
   const handleSave = async () => {
     setSaving(true);
-    await onSave(item.id, { prompt: editForm.prompt, isFree: editForm.isFree, ...(file ? { file } : {}) });
+    await onSave(item.id, { prompt: editForm.prompt, isFree: editForm.isFree, aspectRatio: editForm.aspectRatio, ...(file ? { file } : {}) });
     setSaving(false);
     onClose();
   };
@@ -176,6 +195,16 @@ const EditModal = ({ item, onSave, onClose }: {
           <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
         </label>
         <textarea value={editForm.prompt} onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })} className="w-full px-3 py-2 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none resize-none" rows={4} />
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-wider text-muted-foreground">RATIO:</span>
+          <div className="flex gap-1 flex-wrap">
+            {ASPECT_RATIOS.map((r) => (
+              <button key={r.value} onClick={() => setEditForm({ ...editForm, aspectRatio: r.value })} className={`px-2 py-1 text-[10px] font-bold tracking-wider border transition-colors ${editForm.aspectRatio === r.value ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'}`}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-xs tracking-wider text-foreground cursor-pointer">
             <input type="checkbox" checked={editForm.isFree} onChange={(e) => setEditForm({ ...editForm, isFree: e.target.checked })} className="accent-foreground" />
@@ -204,9 +233,9 @@ const AdminPanel = () => {
 
   useEffect(() => { if (authenticated) fetchItems(); }, [authenticated, fetchItems]);
 
-  const handleAdd = async (newItem: { file: File; prompt: string; isFree: boolean }) => {
+  const handleAdd = async (newItem: { file: File; prompt: string; isFree: boolean; aspectRatio: string }) => {
     if (!user) { toast.error("You must be signed in"); return; }
-    await addItem({ file: newItem.file, prompt: newItem.prompt, isFree: newItem.isFree, sortOrder: 0 });
+    await addItem({ file: newItem.file, prompt: newItem.prompt, isFree: newItem.isFree, sortOrder: 0, aspectRatio: newItem.aspectRatio } as any);
     setShowAddForm(false);
     toast.success("Item added");
   };
