@@ -56,13 +56,14 @@ const AddItemForm = ({
   onAdd,
   onCancel,
 }: {
-  onAdd: (item: { file: File; prompt: string; isFree: boolean }) => Promise<void>;
+  onAdd: (item: { file: File; prompt: string; isFree: boolean; aspectRatio: string }) => Promise<void>;
   onCancel: () => void;
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [prompt, setPrompt] = useState("");
   const [isFree, setIsFree] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState("original");
   const [saving, setSaving] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +80,7 @@ const AddItemForm = ({
       return;
     }
     setSaving(true);
-    await onAdd({ file, prompt, isFree });
+    await onAdd({ file, prompt, isFree, aspectRatio });
     setSaving(false);
   };
 
@@ -100,6 +101,16 @@ const AddItemForm = ({
           <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
         </label>
         <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="AI Prompt" rows={3} className="w-full px-4 py-3 text-xs font-mono bg-background text-foreground border border-border focus:border-foreground focus:outline-none resize-none" />
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-wider text-muted-foreground">RATIO:</span>
+          <div className="flex gap-1">
+            {ASPECT_RATIOS.map((r) => (
+              <button key={r.value} onClick={() => setAspectRatio(r.value)} className={`px-2 py-1 text-[10px] font-bold tracking-wider border transition-colors ${aspectRatio === r.value ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'}`}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-xs tracking-wider text-foreground cursor-pointer">
             <input type="checkbox" checked={isFree} onChange={(e) => setIsFree(e.target.checked)} className="accent-foreground" />
