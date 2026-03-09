@@ -206,7 +206,7 @@ const GalleryImage = ({
         )}
         <motion.div style={{ y }} className="overflow-hidden">
           {imageError ? (
-            <div className="w-full aspect-[3/4] bg-muted flex items-center justify-center">
+            <div className={`w-full bg-muted flex items-center justify-center ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-[3/4]'}`}>
               <span className="text-[10px] tracking-wider text-muted-foreground">FAILED TO LOAD</span>
             </div>
           ) : (
@@ -214,7 +214,7 @@ const GalleryImage = ({
               key={retryCount}
               src={imgSrc}
               alt="Style gallery"
-              className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${item.aspectRatio !== 'original' ? `object-cover ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : ''}` : ''}`}
               loading="eager"
               onLoad={() => setImageLoaded(true)}
               onError={handleImageError}
@@ -223,7 +223,7 @@ const GalleryImage = ({
             />
           )}
           {!imageLoaded && !imageError && (
-            <div className="w-full aspect-[3/4] bg-muted animate-pulse" />
+            <div className={`w-full bg-muted animate-pulse ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-[3/4]'}`} />
           )}
         </motion.div>
       </motion.div>
