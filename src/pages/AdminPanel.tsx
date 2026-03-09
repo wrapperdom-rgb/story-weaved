@@ -8,6 +8,14 @@ import { useAuth } from "@/hooks/useAuth";
 const ADMIN_EMAIL = "wrapperdom@gmail.com";
 const ADMIN_PASSWORD = "mvstr2026";
 
+const ASPECT_RATIOS = [
+  { value: "original", label: "ORIGINAL" },
+  { value: "1:1", label: "1:1" },
+  { value: "4:5", label: "4:5" },
+  { value: "3:4", label: "3:4" },
+  { value: "9:16", label: "9:16" },
+];
+
 const AdminLoginForm = ({ onAuth }: { onAuth: () => void }) => {
   const [password, setPassword] = useState("");
   const { user } = useAuth();
