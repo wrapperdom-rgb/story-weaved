@@ -14,7 +14,7 @@ interface GalleryStore {
   items: GalleryItem[];
   loading: boolean;
   fetchItems: () => Promise<void>;
-  addItem: (item: { file?: File; src?: string; prompt: string; isFree: boolean; sortOrder: number }) => Promise<void>;
+  addItem: (item: { file?: File; src?: string; prompt: string; isFree: boolean; sortOrder: number; aspectRatio?: string }) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   updateItem: (id: string, updates: Partial<Omit<GalleryItem, "id">> & { file?: File }) => Promise<void>;
   reorderItems: (reorderedItems: GalleryItem[]) => Promise<void>;
