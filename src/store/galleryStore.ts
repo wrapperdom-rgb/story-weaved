@@ -65,7 +65,6 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
   addItem: async (item) => {
     let src = item.src || "";
     
-    // Upload file to storage if provided
     if (item.file) {
       try {
         src = await uploadImage(item.file);
@@ -83,6 +82,7 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
         prompt: item.prompt,
         is_free: item.isFree,
         sort_order: maxOrder + 1,
+        aspect_ratio: (item as any).aspectRatio || "original",
       })
       .select()
       .single();
