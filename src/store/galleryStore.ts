@@ -117,6 +117,7 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
     if (updates.prompt !== undefined) dbUpdates.prompt = updates.prompt;
     if (updates.isFree !== undefined) dbUpdates.is_free = updates.isFree;
     if (updates.sortOrder !== undefined) dbUpdates.sort_order = updates.sortOrder;
+    if (updates.aspectRatio !== undefined) dbUpdates.aspect_ratio = updates.aspectRatio;
 
     const { error } = await supabase.from("gallery_items").update(dbUpdates).eq("id", id);
     if (!error) {
