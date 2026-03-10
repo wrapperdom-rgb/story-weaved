@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
+import { useGalleryStore, type GalleryItem, getOptimizedUrl } from "@/store/galleryStore";
 import { useState } from "react";
 import { X, Copy, Download, Lock, Sparkles, Camera, ClipboardPaste } from "lucide-react";
 import { toast } from "sonner";
