@@ -22,6 +22,15 @@ interface GalleryStore {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
+export function getOptimizedUrl(src: string, width: number = 400, quality: number = 75): string {
+  // Only transform Supabase storage URLs
+  if (!src.includes('/storage/v1/object/public/')) return src;
+  return src.replace(
+    '/storage/v1/object/public/',
+    `/storage/v1/render/image/public/`
+  ) + `?width=${width}&quality=${quality}`;
+}
+
 const mapRow = (row: any): GalleryItem => ({
   id: row.id,
   src: row.src,
