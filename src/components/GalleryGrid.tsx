@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useGalleryStore, type GalleryItem, getOptimizedUrl } from "@/store/galleryStore";
+import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
 import { useState } from "react";
 import { X, Copy, Download, Lock, Sparkles, Camera, ClipboardPaste } from "lucide-react";
 import { toast } from "sonner";
@@ -167,10 +167,9 @@ const GalleryImage = ({
 
   const [showModal, setShowModal] = useState(false);
 
-  const thumbnailSrc = retryCount > 0
-    ? `${getOptimizedUrl(item.src, 500, 70)}&retry=${retryCount}`
-    : getOptimizedUrl(item.src, 500, 70);
-  const imgSrc = thumbnailSrc;
+  const imgSrc = retryCount > 0
+    ? `${item.src}${item.src.includes('?') ? '&' : '?'}retry=${retryCount}`
+    : item.src;
 
   const handleImageError = () => {
     if (retryCount < 2) {
