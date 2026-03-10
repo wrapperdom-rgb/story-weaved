@@ -167,9 +167,10 @@ const GalleryImage = ({
 
   const [showModal, setShowModal] = useState(false);
 
-  const imgSrc = retryCount > 0
-    ? `${item.src}${item.src.includes('?') ? '&' : '?'}retry=${retryCount}`
-    : item.src;
+  const thumbnailSrc = retryCount > 0
+    ? `${getOptimizedUrl(item.src, 500, 70)}&retry=${retryCount}`
+    : getOptimizedUrl(item.src, 500, 70);
+  const imgSrc = thumbnailSrc;
 
   const handleImageError = () => {
     if (retryCount < 2) {
