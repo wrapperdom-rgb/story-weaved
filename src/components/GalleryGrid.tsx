@@ -216,7 +216,8 @@ const GalleryImage = ({
               src={imgSrc}
               alt="Style gallery"
               className={`w-full block transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${item.aspectRatio !== 'original' ? `object-cover ${item.aspectRatio === '1:1' ? 'aspect-square' : item.aspectRatio === '4:5' ? 'aspect-[4/5]' : item.aspectRatio === '3:4' ? 'aspect-[3/4]' : item.aspectRatio === '9:16' ? 'aspect-[9/16]' : ''}` : ''}`}
-              loading="eager"
+              loading={index < 3 ? "eager" : "lazy"}
+              decoding="async"
               onLoad={() => setImageLoaded(true)}
               onError={handleImageError}
               whileHover={{ scale: 1.08 }}
