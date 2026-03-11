@@ -14,7 +14,7 @@ const PricingSection = () => {
   const handleGetAccess = async () => {
     if (!user) {
       toast.info("Please sign in first to purchase");
-      navigate("/signin");
+      navigate("/sign-in");
       return;
     }
 
