@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
-import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon, GripVertical, ArrowUp, ArrowDown, Eye, Loader2 } from "lucide-react";
+import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon, GripVertical, ArrowUp, ArrowDown, Eye, Loader2, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_EMAIL = "wrapperdom@gmail.com";
 const ADMIN_PASSWORD = "mvstr2026";
@@ -221,6 +222,52 @@ const EditModal = ({ item, onSave, onClose }: {
   );
 };
 
+const GrantPremiumForm = () => {
+  const [email, setEmail] = useState("");
+  const [granting, setGranting] = useState(false);
+
+  const handleGrant = async () => {
+    const trimmed = email.trim();
+    if (!trimmed) { toast.error("Enter an email"); return; }
+    setGranting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("grant-premium", {
+        body: { email: trimmed },
+      });
+      if (error) throw error;
+      if (data?.error) { toast.error(data.error); }
+      else { toast.success(data?.message || "Done"); setEmail(""); }
+    } catch (e: any) {
+      toast.error(e.message || "Failed");
+    }
+    setGranting(false);
+  };
+
+  return (
+    <div className="border-b border-border px-6 py-3 bg-secondary/50">
+      <div className="max-w-2xl mx-auto flex items-center gap-3">
+        <Crown size={14} className="text-muted-foreground flex-shrink-0" />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Grant premium by email..."
+          className="flex-1 px-3 py-2 text-xs font-mono tracking-wider bg-background text-foreground border border-border focus:border-foreground focus:outline-none transition-colors"
+          onKeyDown={(e) => e.key === "Enter" && handleGrant()}
+        />
+        <button
+          onClick={handleGrant}
+          disabled={granting}
+          className="flex items-center gap-1 px-4 py-2 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {granting && <Loader2 size={12} className="animate-spin" />}
+          {granting ? "GRANTING..." : "GRANT PRO"}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const AdminPanel = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -284,6 +331,7 @@ const AdminPanel = () => {
       </div>
 
       {showAddForm && <AddItemForm onAdd={handleAdd} onCancel={() => setShowAddForm(false)} />}
+      <GrantPremiumForm />
 
       {loading && items.length === 0 && (
         <div className="flex items-center justify-center py-20">
