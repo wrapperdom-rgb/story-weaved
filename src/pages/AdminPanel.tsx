@@ -285,6 +285,7 @@ const AdminPanel = () => {
       </div>
 
       {showAddForm && <AddItemForm onAdd={handleAdd} onCancel={() => setShowAddForm(false)} />}
+      <GrantPremiumForm />
 
       {loading && items.length === 0 && (
         <div className="flex items-center justify-center py-20">
