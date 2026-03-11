@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGalleryStore, type GalleryItem } from "@/store/galleryStore";
-import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon, GripVertical, ArrowUp, ArrowDown, Eye, Loader2 } from "lucide-react";
+import { Trash2, Edit2, Plus, Save, X, ArrowLeft, Upload, ImageIcon, GripVertical, ArrowUp, ArrowDown, Eye, Loader2, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_EMAIL = "wrapperdom@gmail.com";
 const ADMIN_PASSWORD = "mvstr2026";
