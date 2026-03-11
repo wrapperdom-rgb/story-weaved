@@ -1,7 +1,5 @@
-import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useGalleryStore } from "@/store/galleryStore";
-import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import PromptModal from "@/components/PromptModal";
@@ -44,8 +42,7 @@ const GalleryImage = ({
   return (
     <div className="relative break-inside-avoid mb-1">
       <div
-        className="relative group cursor-pointer overflow-hidden gallery-item-enter"
-        style={{ animationDelay: `${(index % 6) * 80}ms` }}
+        className="relative group cursor-pointer overflow-hidden"
         onClick={() => setShowModal(true)}
       >
         {item.isFree && (
@@ -75,16 +72,14 @@ const GalleryImage = ({
         </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <PromptModal
-            item={item}
-            onClose={() => setShowModal(false)}
-            hasPremium={hasPremium}
-            isLoggedIn={isLoggedIn}
-          />
-        )}
-      </AnimatePresence>
+      {showModal && (
+        <PromptModal
+          item={item}
+          onClose={() => setShowModal(false)}
+          hasPremium={hasPremium}
+          isLoggedIn={isLoggedIn}
+        />
+      )}
     </div>
   );
 };

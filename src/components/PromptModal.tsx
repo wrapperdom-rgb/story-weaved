@@ -1,6 +1,4 @@
-import { motion } from "framer-motion";
-import { X, Copy, Download, Sparkles, Camera } from "lucide-react";
-import { Lock } from "lucide-react";
+import { X, Copy, Download, Sparkles, Camera, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -34,21 +32,9 @@ const PromptModal = ({
   };
 
   return createPortal(
-    <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-foreground/80 backdrop-blur-sm" onClick={onClose} />
-      <motion.div
-        className="relative bg-background border border-border max-w-lg w-full max-h-[90vh] overflow-y-auto z-10"
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
+      <div className="relative bg-background border border-border max-w-lg w-full max-h-[90vh] overflow-y-auto z-10">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 z-10 p-1 bg-background text-foreground border border-border hover:bg-accent transition-colors"
@@ -66,26 +52,15 @@ const PromptModal = ({
                   {item.isFree ? "FREE PROMPT" : "PREMIUM PROMPT"}
                 </span>
               </div>
-              <p className="text-xs leading-relaxed text-foreground font-mono">
-                {item.prompt}
-              </p>
+              <p className="text-xs leading-relaxed text-foreground font-mono">{item.prompt}</p>
               <div className="flex gap-2">
-                <button
-                  onClick={handleCopyPrompt}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-                >
-                  <Copy size={14} />
-                  COPY PROMPT
+                <button onClick={handleCopyPrompt} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
+                  <Copy size={14} /> COPY PROMPT
                 </button>
-                <button
-                  onClick={handleDownload}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold tracking-wider text-foreground border border-foreground hover:bg-accent transition-colors"
-                >
-                  <Download size={14} />
-                  DOWNLOAD
+                <button onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold tracking-wider text-foreground border border-foreground hover:bg-accent transition-colors">
+                  <Download size={14} /> DOWNLOAD
                 </button>
               </div>
-
               <div className="border-t border-border pt-4 space-y-3">
                 <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">HOW TO USE</p>
                 <div className="space-y-2">
@@ -112,9 +87,7 @@ const PromptModal = ({
             <div className="text-center py-4 space-y-3">
               <Lock size={24} className="mx-auto text-muted-foreground" />
               <p className="text-xs font-bold tracking-wider text-muted-foreground">
-                {isLoggedIn
-                  ? "GET ACCESS TO UNLOCK PREMIUM PROMPTS"
-                  : "SIGN UP TO UNLOCK THIS PROMPT"}
+                {isLoggedIn ? "GET ACCESS TO UNLOCK PREMIUM PROMPTS" : "SIGN UP TO UNLOCK THIS PROMPT"}
               </p>
               <button
                 onClick={() => {
@@ -132,8 +105,8 @@ const PromptModal = ({
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>,
+      </div>
+    </div>,
     document.body
   );
 };
