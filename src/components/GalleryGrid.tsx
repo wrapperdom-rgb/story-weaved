@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useGalleryStore } from "@/store/galleryStore";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
