@@ -72,16 +72,14 @@ const GalleryImage = ({
         </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <PromptModal
-            item={item}
-            onClose={() => setShowModal(false)}
-            hasPremium={hasPremium}
-            isLoggedIn={isLoggedIn}
-          />
-        )}
-      </AnimatePresence>
+      {showModal && (
+        <PromptModal
+          item={item}
+          onClose={() => setShowModal(false)}
+          hasPremium={hasPremium}
+          isLoggedIn={isLoggedIn}
+        />
+      )}
     </div>
   );
 };
