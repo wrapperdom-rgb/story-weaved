@@ -42,8 +42,7 @@ const GalleryImage = ({
   return (
     <div className="relative break-inside-avoid mb-1">
       <div
-        className="relative group cursor-pointer overflow-hidden gallery-item-enter"
-        style={{ animationDelay: `${(index % 6) * 80}ms` }}
+        className="relative group cursor-pointer overflow-hidden"
         onClick={() => setShowModal(true)}
       >
         {item.isFree && (
