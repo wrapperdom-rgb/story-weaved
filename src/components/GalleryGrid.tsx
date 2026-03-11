@@ -126,7 +126,7 @@ const PromptModal = ({
                   if (isLoggedIn) {
                     document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
                   } else {
-                    navigate("/signup");
+                    navigate("/sign-up");
                   }
                 }}
                 className="w-full px-4 py-3 text-xs font-bold tracking-wider bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
